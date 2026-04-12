@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>JF Problem Solving · Johannes Felzmann</title>
+  <meta name="description" content="Freelance software developer & lecturer based in Vienna. Full-stack development, AI applications, and tech training." />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet" />
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            serif: ['"DM Serif Display"', 'Georgia', 'serif'],
+            sans:  ['"DM Sans"', 'system-ui', 'sans-serif'],
+          },
+          colors: {
+            ink:    '#1a1a18',
+            paper:  '#f7f4ee',
+            accent: '#1D9E75',
+            'accent-dark': '#0F6E56',
+            muted:  '#888780',
+            border: '#D3D1C7',
+          },
+          animation: {
+            'fade-up': 'fadeUp 0.6s ease both',
+          },
+          keyframes: {
+            fadeUp: {
+              '0%':   { opacity: '0', transform: 'translateY(24px)' },
+              '100%': { opacity: '1', transform: 'translateY(0)' },
+            },
+          },
+        },
+      },
+    }
+  </script>
+  <style>
+    /* Stagger animation helpers */
+    .delay-100 { animation-delay: 0.1s; }
+    .delay-200 { animation-delay: 0.2s; }
+    .delay-300 { animation-delay: 0.3s; }
+    .delay-400 { animation-delay: 0.4s; }
+    .delay-500 { animation-delay: 0.5s; }
+
+    /* Reveal on scroll */
+    .reveal { opacity: 0; transform: translateY(24px); transition: opacity 0.6s ease, transform 0.6s ease; }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+    .reveal.delay-1 { transition-delay: 0.1s; }
+    .reveal.delay-2 { transition-delay: 0.2s; }
+    .reveal.delay-3 { transition-delay: 0.3s; }
+    .reveal.delay-4 { transition-delay: 0.4s; }
+
+    /* Subtle noise texture on hero */
+    .hero-noise::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 1;
+    }
+  </style>
+</head>
+<body class="font-sans bg-paper text-ink antialiased">
+
+  <!-- ===== NAVBAR ===== -->
+  <header id="navbar" class="sticky top-0 z-50 bg-paper/90 backdrop-blur-md border-b border-border transition-shadow duration-300">
+    <div class="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
+      <a href="#home" class="font-serif text-lg tracking-tight">
+        JF <span class="text-accent">Problem Solving</span>
+      </a>
+      <!-- Desktop nav -->
+      <nav class="hidden md:flex items-center gap-8">
+        <a href="#about"    class="text-xs uppercase tracking-widest text-muted hover:text-accent transition-colors">About</a>
+        <a href="#services" class="text-xs uppercase tracking-widest text-muted hover:text-accent transition-colors">Services</a>
+        <a href="#skills"   class="text-xs uppercase tracking-widest text-muted hover:text-accent transition-colors">Skills</a>
+        <a href="#contact"  class="bg-accent text-white text-xs uppercase tracking-widest px-5 py-2 rounded-full hover:bg-accent-dark transition-colors">Contact</a>
+      </nav>
+      <!-- Mobile hamburger -->
+      <button id="menu-btn" class="md:hidden flex flex-col gap-1.5 p-2" aria-label="Toggle menu">
+        <span class="block w-5 h-0.5 bg-ink transition-all duration-300" id="bar1"></span>
+        <span class="block w-5 h-0.5 bg-ink transition-all duration-300" id="bar2"></span>
+        <span class="block w-5 h-0.5 bg-ink transition-all duration-300" id="bar3"></span>
+      </button>
+    </div>
+    <!-- Mobile menu -->
+    <div id="mobile-menu" class="md:hidden hidden border-t border-border bg-paper px-6 py-4 flex flex-col gap-4">
+      <a href="#about"    onclick="closeMobileMenu()" class="text-sm uppercase tracking-widest text-muted hover:text-accent">About</a>
+      <a href="#services" onclick="closeMobileMenu()" class="text-sm uppercase tracking-widest text-muted hover:text-accent">Services</a>
+      <a href="#skills"   onclick="closeMobileMenu()" class="text-sm uppercase tracking-widest text-muted hover:text-accent">Skills</a>
+      <a href="#contact"  onclick="closeMobileMenu()" class="text-sm uppercase tracking-widest text-accent font-medium">Contact</a>
+    </div>
+  </header>
+
+  <!-- ===== HERO ===== -->
+  <section id="home" class="hero-noise relative min-h-[90vh] flex flex-col justify-end overflow-hidden bg-paper">
+    <!-- Gradient blobs -->
+    <div class="absolute inset-0 z-0 pointer-events-none">
+      <div class="absolute top-0 right-0 w-[60vw] h-[60vw] bg-accent/10 rounded-full blur-3xl translate-x-1/4 -translate-y-1/4"></div>
+      <div class="absolute bottom-0 left-0 w-[40vw] h-[40vw] bg-border/40 rounded-full blur-3xl -translate-x-1/4 translate-y-1/4"></div>
+    </div>
+
+    <div class="relative z-10 max-w-6xl mx-auto px-6 pb-20 pt-32 w-full">
+      <div class="animate-fade-up">
+        <span class="inline-flex items-center gap-2 text-xs uppercase tracking-widest text-accent border border-accent/30 rounded-full px-4 py-1.5 mb-8 bg-white/60 backdrop-blur-sm">
+          <span class="w-1.5 h-1.5 rounded-full bg-accent inline-block"></span>
+          Freelancer · Vienna, Austria
+        </span>
+      </div>
+
+      <h1 class="font-serif text-5xl sm:text-6xl lg:text-8xl leading-[1.05] tracking-tight mb-6 animate-fade-up delay-100">
+        Software &amp; AI<br>
+        done <em class="text-accent not-italic">right.</em>
+      </h1>
+
+      <p class="text-muted text-lg max-w-xl mb-10 animate-fade-up delay-200">
+        Full-stack development, agentic AI applications, and hands-on tech training —
+        built for clarity, not complexity.
+      </p>
+
+      <div class="flex flex-wrap gap-4 animate-fade-up delay-300">
+        <a href="#contact" class="bg-ink text-paper text-sm font-medium px-7 py-3.5 rounded-full hover:bg-accent transition-colors duration-200">
+          Work with me
+        </a>
+        <a href="#services" class="border border-ink text-ink text-sm font-medium px-7 py-3.5 rounded-full hover:bg-ink hover:text-paper transition-colors duration-200">
+          What I do
+        </a>
+      </div>
+
+      <!-- Scroll indicator -->
+      <div class="hidden md:flex items-center gap-3 mt-20 text-muted text-xs uppercase tracking-widest animate-fade-up delay-500">
+        <div class="w-10 h-px bg-muted"></div>
+        Scroll to explore
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== ABOUT ===== -->
+  <section id="about" class="bg-white border-t border-border py-24 px-6">
+    <div class="max-w-6xl mx-auto">
+      <div class="grid md:grid-cols-2 gap-16 items-start">
+
+        <div>
+          <p class="text-xs uppercase tracking-widest text-accent mb-3 reveal">About me</p>
+          <h2 class="font-serif text-4xl lg:text-5xl leading-tight mb-8 reveal delay-1">Johannes<br>Felzmann</h2>
+          <div class="space-y-4 text-[15px] text-ink/70 leading-relaxed reveal delay-2">
+            <p>I'm a Viennese software developer and lecturer with a master's degree in Logic &amp; Computation from TU Wien. I help businesses build smart software — and understand the technology behind it.</p>
+            <p>My work spans full-stack AI applications, automation pipelines, and technical education: from agentic AI systems using LangChain &amp; LangGraph, to clean-code workshops and test automation training.</p>
+            <p>I believe every problem has an elegant solution. Finding it is the part I enjoy most.</p>
+            <p>Outside of code, I compete in triathlon at a professional level — multiple Burgenland championship titles, national top-10 finishes, and world championship qualifications. Starting as a PRO athlete in 2026.</p>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-4 reveal delay-3">
+          <div class="bg-paper rounded-2xl p-6 border border-border">
+            <div class="font-serif text-4xl text-accent mb-1">MSc</div>
+            <div class="text-xs uppercase tracking-widest text-muted">Logic &amp; Computation, TU Wien</div>
+          </div>
+          <div class="bg-paper rounded-2xl p-6 border border-border">
+            <div class="font-serif text-4xl text-accent mb-1">10+</div>
+            <div class="text-xs uppercase tracking-widest text-muted">Tech topics lectured</div>
+          </div>
+          <!--<div class="bg-paper rounded-2xl p-6 border border-border">
+            <div class="font-serif text-4xl text-accent mb-1">PRO</div>
+            <div class="text-xs uppercase tracking-widest text-muted">Triathlon athlete 2026</div>
+          </div>-->
+
+          <!-- Education timeline -->
+          <div class="col-span-2 bg-paper rounded-2xl p-6 border border-border space-y-4">
+            <p class="text-xs uppercase tracking-widest text-accent mb-2">Education</p>
+            <div class="flex gap-4">
+              <div class="flex flex-col items-center">
+                <div class="w-2 h-2 rounded-full bg-accent mt-1"></div>
+                <div class="w-px flex-1 bg-border mt-1"></div>
+              </div>
+              <div class="pb-4">
+                <div class="text-xs text-muted mb-0.5">2022 – 2025</div>
+                <div class="text-sm font-medium">MSc Logic &amp; Computation</div>
+                <div class="text-xs text-muted">TU Wien · Thesis: Automated Reasoning in Linear Arithmetic</div>
+              </div>
+            </div>
+            <div class="flex gap-4">
+              <div class="flex flex-col items-center">
+                <div class="w-2 h-2 rounded-full bg-accent mt-1"></div>
+                <div class="w-px flex-1 bg-border mt-1"></div>
+              </div>
+              <div class="pb-4">
+                <div class="text-xs text-muted mb-0.5">2019 – 2022</div>
+                <div class="text-sm font-medium">BSc Software &amp; Information Engineering</div>
+              </div>
+            </div>
+            <div class="flex gap-4">
+              <div class="flex flex-col items-center">
+                <div class="w-2 h-2 rounded-full bg-border mt-1"></div>
+              </div>
+              <div>
+                <div class="text-xs text-muted mb-0.5">2014 – 2018</div>
+                <div class="text-sm font-medium">A-Levels · Information Technology</div>
+                <div class="text-xs text-muted">HTL Pinkafeld</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== SERVICES ===== -->
+  <section id="services" class="bg-paper border-t border-border py-24 px-6">
+    <div class="max-w-6xl mx-auto">
+      <p class="text-xs uppercase tracking-widest text-accent mb-3 reveal">Services</p>
+      <h2 class="font-serif text-4xl lg:text-5xl leading-tight mb-16 reveal delay-1">How I can help</h2>
+
+      <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
+
+        <div class="reveal delay-1 group bg-white rounded-2xl border border-border p-7 hover:border-accent/50 hover:shadow-lg hover:shadow-accent/5 transition-all duration-300">
+          <div class="w-11 h-11 rounded-xl bg-accent/10 flex items-center justify-center text-xl mb-5">🤖</div>
+          <h3 class="font-serif text-xl mb-3">AI Application Development</h3>
+          <p class="text-sm text-muted leading-relaxed">End-to-end agentic &amp; generative AI apps — from LLM integration and RAG pipelines to production-ready systems with LangChain, LangGraph, and Azure OpenAI.</p>
+        </div>
+
+        <div class="reveal delay-2 group bg-white rounded-2xl border border-border p-7 hover:border-accent/50 hover:shadow-lg hover:shadow-accent/5 transition-all duration-300">
+          <div class="w-11 h-11 rounded-xl bg-accent/10 flex items-center justify-center text-xl mb-5">💻</div>
+          <h3 class="font-serif text-xl mb-3">Full-Stack Development</h3>
+          <p class="text-sm text-muted leading-relaxed">Web applications built from backend (Java, Spring, Python) to frontend (Angular, Vue.js) with clean architecture, REST APIs, and solid test coverage.</p>
+        </div>
+
+        <div class="reveal delay-3 group bg-white rounded-2xl border border-border p-7 hover:border-accent/50 hover:shadow-lg hover:shadow-accent/5 transition-all duration-300">
+          <div class="w-11 h-11 rounded-xl bg-accent/10 flex items-center justify-center text-xl mb-5">📚</div>
+          <h3 class="font-serif text-xl mb-3">Tech Training &amp; Lectures</h3>
+          <p class="text-sm text-muted leading-relaxed">Tailored workshops on AI, clean code, test automation, data science, cloud, and more — for developers and teams at any level.</p>
+        </div>
+
+        <div class="reveal delay-4 group bg-white rounded-2xl border border-border p-7 hover:border-accent/50 hover:shadow-lg hover:shadow-accent/5 transition-all duration-300">
+          <div class="w-11 h-11 rounded-xl bg-accent/10 flex items-center justify-center text-xl mb-5">⚙️</div>
+          <h3 class="font-serif text-xl mb-3">Automation &amp; Tooling</h3>
+          <p class="text-sm text-muted leading-relaxed">RPA with Python, CI/CD pipelines, Selenium &amp; Playwright test automation, and developer workflow improvements that save real time.</p>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== SKILLS ===== -->
+  <section id="skills" class="bg-white border-t border-border py-24 px-6">
+    <div class="max-w-6xl mx-auto">
+      <p class="text-xs uppercase tracking-widest text-accent mb-3 reveal">Expertise</p>
+      <h2 class="font-serif text-4xl lg:text-5xl leading-tight mb-16 reveal delay-1">What I bring<br>to the table</h2>
+
+      <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
+
+        <div class="reveal delay-1 bg-paper rounded-2xl border border-border p-6">
+          <h4 class="text-xs uppercase tracking-widest text-accent mb-4">Languages</h4>
+          <div class="flex flex-wrap gap-2">
+            <span class="bg-white border border-border text-ink/70 text-xs rounded-full px-3 py-1">Java</span>
+            <span class="bg-white border border-border text-ink/70 text-xs rounded-full px-3 py-1">Python</span>
+            <span class="bg-white border border-border text-ink/70 text-xs rounded-full px-3 py-1">TypeScript</span>
+            <span class="bg-white border border-border text-ink/70 text-xs rounded-full px-3 py-1">JavaScript</span>
+            <span class="bg-white border border-border text-ink/70 text-xs rounded-full px-3 py-1">SQL &amp; PL/SQL</span>
+            <span class="bg-white border border-border text-ink/70 text-xs rounded-full px-3 py-1">C/C++</span>
+            <span class="bg-white border border-border text-ink/70 text-xs rounded-full px-3 py-1">Haskell</span>
+            <span class="bg-white border border-border text-ink/70 text-xs rounded-full px-3 py-1">HTML5 &amp; CSS3</span>
+          </div>
+        </div>
+
+        <div class="reveal delay-2 bg-paper rounded-2xl border border-border p-6">
+          <h4 class="text-xs uppercase tracking-widest text-accent mb-4">AI &amp; Data</h4>
+          <div class="flex flex-wrap gap-2">
+            <span class="bg-white border border-border text-ink/70 text-xs rounded-full px-3 py-1">LangChain</span>
+            <span class="bg-white border border-border text-ink/70 text-xs rounded-full px-3 py-1">LangGraph</span>
+            <span class="bg-white border border-border text-ink/70 text-xs rounded-full px-3 py-1">Haystack</span>
+            <span class="bg-white border border-border text-ink/70 text-xs rounded-full px-3 py-1">RAG</span>
+            <span class="bg-white border border-border text-ink/70 text-xs rounded-full px-3 py-1">OpenAI</span>
+            <span class="bg-white border border-border text-ink/70 text-xs rounded-full px-3 py-1">Azure OpenAI</span>
+            <span class="bg-white border border-border text-ink/70 text-xs rounded-full px-3 py-1">HuggingFace</span>
+            <span class="bg-white border border-border text-ink/70 text-xs rounded-full px-3 py-1">KNIME</span>
+            <span class="bg-white border border-border text-ink/70 text-xs rounded-full px-3 py-1">ML / Deep Learning</span>
+          </div>
+        </div>
+
+        <div class="reveal delay-3 bg-paper rounded-2xl border border-border p-6">
+          <h4 class="text-xs uppercase tracking-widest text-accent mb-4">Frameworks</h4>
+          <div class="flex flex-wrap gap-2">
+            <span class="bg-white border border-border text-ink/70 text-xs rounded-full px-3 py-1">Spring Boot</span>
+            <span class="bg-white border border-border text-ink/70 text-xs rounded-full px-3 py-1">Angular</span>
+            <span class="bg-white border border-border text-ink/70 text-xs rounded-full px-3 py-1">Vue.js</span>
+            <span class="bg-white border border-border text-ink/70 text-xs rounded-full px-3 py-1">Node.js</span>
+            <span class="bg-white border border-border text-ink/70 text-xs rounded-full px-3 py-1">Selenium</span>
+            <span class="bg-white border border-border text-ink/70 text-xs rounded-full px-3 py-1">Playwright</span>
+            <span class="bg-white border border-border text-ink/70 text-xs rounded-full px-3 py-1">JUnit &amp; Mockito</span>
+          </div>
+        </div>
+
+        <div class="reveal delay-1 bg-paper rounded-2xl border border-border p-6">
+          <h4 class="text-xs uppercase tracking-widest text-accent mb-4">Cloud &amp; DevOps</h4>
+          <div class="flex flex-wrap gap-2">
+            <span class="bg-white border border-border text-ink/70 text-xs rounded-full px-3 py-1">Azure Cloud</span>
+            <span class="bg-white border border-border text-ink/70 text-xs rounded-full px-3 py-1">Docker</span>
+            <span class="bg-white border border-border text-ink/70 text-xs rounded-full px-3 py-1">GitHub Actions</span>
+            <span class="bg-white border border-border text-ink/70 text-xs rounded-full px-3 py-1">GitLab CI</span>
+            <span class="bg-white border border-border text-ink/70 text-xs rounded-full px-3 py-1">Git</span>
+            <span class="bg-white border border-border text-ink/70 text-xs rounded-full px-3 py-1">Linux/Unix</span>
+          </div>
+        </div>
+
+        <div class="reveal delay-2 bg-paper rounded-2xl border border-border p-6">
+          <h4 class="text-xs uppercase tracking-widest text-accent mb-4">Software Engineering</h4>
+          <div class="flex flex-wrap gap-2">
+            <span class="bg-white border border-border text-ink/70 text-xs rounded-full px-3 py-1">Clean Code</span>
+            <span class="bg-white border border-border text-ink/70 text-xs rounded-full px-3 py-1">Agile &amp; Scrum</span>
+            <span class="bg-white border border-border text-ink/70 text-xs rounded-full px-3 py-1">REST API design</span>
+            <span class="bg-white border border-border text-ink/70 text-xs rounded-full px-3 py-1">OOP &amp; FP</span>
+            <span class="bg-white border border-border text-ink/70 text-xs rounded-full px-3 py-1">Test automation</span>
+            <span class="bg-white border border-border text-ink/70 text-xs rounded-full px-3 py-1">Secure coding</span>
+          </div>
+        </div>
+
+        <div class="reveal delay-3 bg-paper rounded-2xl border border-border p-6">
+          <h4 class="text-xs uppercase tracking-widest text-accent mb-4">Teaching &amp; Logic</h4>
+          <div class="flex flex-wrap gap-2">
+            <span class="bg-white border border-border text-ink/70 text-xs rounded-full px-3 py-1">Technical lecturing</span>
+            <span class="bg-white border border-border text-ink/70 text-xs rounded-full px-3 py-1">Curriculum design</span>
+            <span class="bg-white border border-border text-ink/70 text-xs rounded-full px-3 py-1">Formal verification</span>
+            <span class="bg-white border border-border text-ink/70 text-xs rounded-full px-3 py-1">Automated reasoning</span>
+            <span class="bg-white border border-border text-ink/70 text-xs rounded-full px-3 py-1">Discrete mathematics</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== CONTACT ===== -->
+  <section id="contact" class="bg-ink text-paper py-24 px-6">
+    <div class="max-w-6xl mx-auto">
+      <div class="grid md:grid-cols-2 gap-16 items-start">
+
+        <div>
+          <p class="text-xs uppercase tracking-widest text-accent mb-3 reveal">Get in touch</p>
+          <h2 class="font-serif text-4xl lg:text-5xl leading-tight mb-6 reveal delay-1">
+            Let's solve<br>something together
+          </h2>
+          <p class="text-paper/60 text-[15px] leading-relaxed mb-10 reveal delay-2">
+            Whether you need a software project built, your team trained on modern tech,
+            or an AI system integrated into your workflow — I'd love to hear from you.
+          </p>
+
+          <div class="space-y-4 reveal delay-3">
+            <a href="mailto:johannes.felzmann@gmx.at" class="flex items-center gap-4 group">
+              <div class="w-9 h-9 rounded-full border border-paper/20 flex items-center justify-center text-sm group-hover:border-accent group-hover:text-accent transition-colors">✉</div>
+              <span class="text-sm text-paper/70 group-hover:text-paper transition-colors">johannes.felzmann@gmx.at</span>
+            </a>
+            <a href="tel:+436991907319" class="flex items-center gap-4 group">
+              <div class="w-9 h-9 rounded-full border border-paper/20 flex items-center justify-center text-sm group-hover:border-accent group-hover:text-accent transition-colors">☎</div>
+              <span class="text-sm text-paper/70 group-hover:text-paper transition-colors">(+43) 699 190 731 96</span>
+            </a>
+            <div class="flex items-center gap-4">
+              <div class="w-9 h-9 rounded-full border border-paper/20 flex items-center justify-center text-sm">⌖</div>
+              <span class="text-sm text-paper/70">Vienna, Austria</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Contact form — hook up to Formspree by replacing action URL -->
+        <form id="contact-form" action="https://formspree.io/f/YOUR_FORM_ID" method="POST" class="space-y-4 reveal delay-2">
+          <div class="grid sm:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-xs uppercase tracking-widest text-paper/40 mb-2">Name</label>
+              <input type="text" name="name" required placeholder="Your name"
+                class="w-full bg-white/5 border border-paper/10 rounded-xl px-4 py-3 text-sm text-paper placeholder-paper/30 focus:outline-none focus:border-accent transition-colors" />
+            </div>
+            <div>
+              <label class="block text-xs uppercase tracking-widest text-paper/40 mb-2">Email</label>
+              <input type="email" name="email" required placeholder="your@email.com"
+                class="w-full bg-white/5 border border-paper/10 rounded-xl px-4 py-3 text-sm text-paper placeholder-paper/30 focus:outline-none focus:border-accent transition-colors" />
+            </div>
+          </div>
+          <div>
+            <label class="block text-xs uppercase tracking-widest text-paper/40 mb-2">Subject</label>
+            <input type="text" name="subject" placeholder="Project idea, training inquiry, …"
+              class="w-full bg-white/5 border border-paper/10 rounded-xl px-4 py-3 text-sm text-paper placeholder-paper/30 focus:outline-none focus:border-accent transition-colors" />
+          </div>
+          <div>
+            <label class="block text-xs uppercase tracking-widest text-paper/40 mb-2">Message</label>
+            <textarea name="message" required rows="5" placeholder="Tell me about your project or question…"
+              class="w-full bg-white/5 border border-paper/10 rounded-xl px-4 py-3 text-sm text-paper placeholder-paper/30 focus:outline-none focus:border-accent transition-colors resize-none"></textarea>
+          </div>
+          <button type="submit"
+            class="w-full bg-accent text-white text-sm font-medium py-3.5 rounded-full hover:bg-accent-dark transition-colors duration-200">
+            Send message →
+          </button>
+          <div id="form-success" class="hidden text-sm text-accent bg-accent/10 rounded-xl px-4 py-3 text-center">
+            Thanks! I'll get back to you shortly.
+          </div>
+          <div id="form-error" class="hidden text-sm text-red-400 bg-red-400/10 rounded-xl px-4 py-3 text-center">
+            Something went wrong. Please email me directly.
+          </div>
+        </form>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== FOOTER ===== -->
+  <footer class="bg-ink border-t border-paper/10 py-6 px-6 text-center">
+    <p class="text-xs uppercase tracking-widest text-paper/30">
+      © 2026 JF Problem Solving · Johannes Felzmann · Vienna, Austria
+    </p>
+  </footer>
+
+  <!-- ===== SCRIPTS ===== -->
+  <script>
+    // Mobile menu toggle
+    const menuBtn = document.getElementById('menu-btn');
+    const mobileMenu = document.getElementById('mobile-menu');
+    const bar1 = document.getElementById('bar1');
+    const bar2 = document.getElementById('bar2');
+    const bar3 = document.getElementById('bar3');
+    let menuOpen = false;
+
+    menuBtn.addEventListener('click', () => {
+      menuOpen = !menuOpen;
+      mobileMenu.classList.toggle('hidden', !menuOpen);
+      bar1.style.transform = menuOpen ? 'rotate(45deg) translate(4px,4px)' : '';
+      bar2.style.opacity  = menuOpen ? '0' : '1';
+      bar3.style.transform = menuOpen ? 'rotate(-45deg) translate(4px,-4px)' : '';
+    });
+
+    function closeMobileMenu() {
+      menuOpen = false;
+      mobileMenu.classList.add('hidden');
+      bar1.style.transform = '';
+      bar2.style.opacity = '1';
+      bar3.style.transform = '';
+    }
+
+    // Scroll reveal
+    const reveals = document.querySelectorAll('.reveal');
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          e.target.classList.add('visible');
+          observer.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.1 });
+    reveals.forEach(el => observer.observe(el));
+
+    // Navbar shadow on scroll
+    window.addEventListener('scroll', () => {
+      document.getElementById('navbar').classList.toggle('shadow-md', window.scrollY > 10);
+    });
+
+    // Contact form (Formspree AJAX)
+    const form = document.getElementById('contact-form');
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const btn = form.querySelector('button[type=submit]');
+      btn.textContent = 'Sending…';
+      btn.disabled = true;
+      try {
+        const res = await fetch(form.action, {
+          method: 'POST',
+          body: new FormData(form),
+          headers: { 'Accept': 'application/json' }
+        });
+        if (res.ok) {
+          form.reset();
+          document.getElementById('form-success').classList.remove('hidden');
+          btn.textContent = 'Sent ✓';
+        } else {
+          throw new Error();
+        }
+      } catch {
+        document.getElementById('form-error').classList.remove('hidden');
+        btn.textContent = 'Send message →';
+        btn.disabled = false;
+      }
+    });
+  </script>
+
+</body>
+</html>
